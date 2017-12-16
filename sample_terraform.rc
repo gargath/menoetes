@@ -1,0 +1,3 @@
+credentials "modules.howthe.click" {
+  "token" = "reallylongstringthatstotallygoingtostandoutinthelistofheaders"
+}
