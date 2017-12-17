@@ -1,13 +1,25 @@
-package main
+package server
 
 import (
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 )
 
+type registryServer struct{
+	tlsCertFilePath string
+	tlsKeyFilePath string
+}
+
 type helloHandler struct{}
+
+func New(cert string, key string) *registryServer {
+	return &registryServer {
+		tlsCertFilePath: cert,
+		tlsKeyFilePath: key,
+	}
+}
 
 func (h helloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
         log.Printf("Request Headers:\n")
@@ -31,7 +43,8 @@ func (h helloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func main() {
-	err := http.ListenAndServeTLS(":443", "/etc/letsencrypt/live/modules.howthe.click/cert.pem", "/etc/letsencrypt/live/modules.howthe.click/privkey.pem", helloHandler{})
+
+func (s *registryServer) Run() {
+	err := http.ListenAndServeTLS(":443", s.tlsCertFilePath, s.tlsKeyFilePath, helloHandler{})
 	log.Fatal(err)
 }
