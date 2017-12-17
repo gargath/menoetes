@@ -8,6 +8,18 @@
   version = "v1.4.2"
 
 [[projects]]
+  name = "github.com/gorilla/context"
+  packages = ["."]
+  revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
+  version = "v1.1"
+
+[[projects]]
+  name = "github.com/gorilla/mux"
+  packages = ["."]
+  revision = "7f08801859139f86dfafd1c296e2cba9a80d292e"
+  version = "v1.6.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/hashicorp/hcl"
   packages = [".","hcl/ast","hcl/parser","hcl/scanner","hcl/strconv","hcl/token","json/parser","json/scanner","json/token"]
@@ -94,6 +106,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7ec59672546afd318307674991817e2824a30a03f5ede93fb3d037969da2c266"
+  inputs-digest = "3b3b54e3f054ecea3b960a876b25c776591cdd7fe7dd04cb83297b0b6a3047e1"
   solver-name = "gps-cdcl"
   solver-version = 1

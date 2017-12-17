@@ -19,5 +19,9 @@ func LoadConfig() (error) {
 			log.Info("No config file found, using defaults")
 		}
 	}
+	if (viper.GetBool("debug")) {
+		log.SetLevel(log.DebugLevel)
+		log.WithFields(log.Fields{"config": viper.AllSettings(),}).Debug("Configuration:")
+	}
 	return nil
 }
