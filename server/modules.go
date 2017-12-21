@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	mux "github.com/gorilla/mux"
 	"net/http"
+	"encoding/json"
 
   backend "github.com/gargath/menoetes/backend"
 )
@@ -48,7 +49,8 @@ func (api *moduleAPI) versionDetailsHandler(w http.ResponseWriter, r *http.Reque
     log.Error(err)
   } else {
     w.Header().Set("Content-Type", "application/json")
-    fmt.Fprintf(w, details)
+		out, _ := json.Marshal(details)
+    fmt.Fprintf(w, string(out))
   }
 }
 
@@ -88,7 +90,8 @@ func (api *moduleAPI) versionsHandler(w http.ResponseWriter, r *http.Request) {
     log.Error(err)
   } else {
     w.Header().Set("Content-Type", "application/json")
-    fmt.Fprintf(w, versions)
+		out, _ := json.Marshal(versions)
+    fmt.Fprintf(w, string(out))
   }
 }
 
