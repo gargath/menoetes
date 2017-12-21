@@ -10,6 +10,7 @@ type Backend interface {
   GetLatestVersion(string, string, string) (string, error)
   GetDownloadURL(string, string, string, string) (string, error)
   GetModuleVersions(string, string, string) ([]Module, error)
+  GetModulesList(string, string, string) ([]Module, error)
 }
 
 type Module struct {
@@ -21,7 +22,7 @@ type Module struct {
   Provider      string         `json:"provider"`
   Description   string         `json:"description"`
   Source        string         `json:"source"`
-  Published_at  time.Time           `json:"published_at"`
+  Published_at  time.Time      `json:"published_at"`
   Downloads     int            `json:"downloads"`
   Verified      bool           `json:"verified"`
 }

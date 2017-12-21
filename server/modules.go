@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"strconv"
 	log "github.com/sirupsen/logrus"
 	mux "github.com/gorilla/mux"
 	"net/http"
@@ -18,6 +19,11 @@ func (api *moduleAPI) listHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
   	log.Printf("Request for %s\n", r.URL.Path)
     vars := mux.Vars(r)
+		queries := r.URL.Query()
+		limit, _ := strconv.Atoi(queries.Get("limit"))
+		if limit < 1 || limit > 10 {
+			limit = 10
+		}
     namespace, ok := vars["namespace"]
     if (ok) {
       name, ok := vars["name"]
@@ -29,7 +35,17 @@ func (api *moduleAPI) listHandler(w http.ResponseWriter, r *http.Request) {
     } else {
       fmt.Fprintf(w, "hello, you've hit %s and will receive ALL modules\n", r.URL.Path)
     }
-		return
+		meta := &Metatype{
+			Limit: limit,
+			Current_offset: 0,
+			Next_url: "bla",
+		}
+		list, _ := api.backend.GetModulesList(vars["namespace"], vars["name"], vars["provider"])
+		resp := &ListResponse{
+			Meta: *meta,
+			Modules: list,
+		}
+		json.NewEncoder(w).Encode(resp)
 }
 
 func (api *moduleAPI) versionDetailsHandler(w http.ResponseWriter, r *http.Request) {

@@ -15,6 +15,10 @@ func (b *MockBackend) GetDownloadURL(namespace string, name string, provider str
   return fmt.Sprintf("https://localhost/downloads/%s", name), nil
 }
 
+func (b *MockBackend) GetModulesList(namespace string, name string, provider string) ([]Module, error) {
+  return b.GetModuleVersions(namespace, name, provider)
+}
+
 func (b *MockBackend) GetModuleVersions(namespace string, name string, provider string) ([]Module, error) {
   var modules []Module
   t, _ := time.Parse(time.RFC3339Nano, "2013-06-05T14:10:43.678Z")
