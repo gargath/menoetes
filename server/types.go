@@ -15,3 +15,28 @@ type ListResponse struct {
   Meta            Metatype `json:"meta"`
   Modules         []backend.Module `json:"modules"`
 }
+
+type VersionsModulestype struct {
+  Source          string  `json:"source"`
+  Versions        []VersionsVersiontype  `json:"versions"`
+}
+
+type VersionsVersiontype struct {
+  Version         string `json:"version"`
+  Submodules      []string `json:"submodules"`
+  Root            VersionsRoottype `json:"root"`
+}
+
+type VersionsRoottype struct {
+  Dependencies  []string `json:"dependencies"`
+  Providers     []VersionsProviderstype `json:"providers"`
+}
+
+type VersionsProviderstype struct {
+  Name          string `json:"name"`
+  Version       string `json:"version"`
+}
+
+type VersionsResponse struct {
+  Modules         []VersionsModulestype `json:"modules"`
+}

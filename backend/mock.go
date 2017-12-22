@@ -37,16 +37,30 @@ func (b *MockBackend) GetModuleVersions(namespace string, name string, provider 
   }
   modules = append(modules, *m)
   m = &Module{
-    Id: "hashicorp/consul/aws/0.0.1",
-    Owner: "foobar",
+    Id: "hashicorp/consul/aws/0.0.2",
+    Owner: "gruntwork-team",
     Namespace: "hashicorp",
-    Name: "anuga",
-    Version: "0.0.1",
+    Name: "consul",
+    Version: "0.0.2",
     Provider: "aws",
-    Description: "A Terraform Module for nothingin particular",
-    Source: "https://github.com/hashicorp/foobar",
+    Description: "A Terraform Module for how to run Consul on AWS using Terraform and Packer",
+    Source: "https://github.com/hashicorp/terraform-aws-consul",
     Published_at: t,
-    Downloads: 15,
+    Downloads: 5,
+    Verified: false,
+  }
+  modules = append(modules, *m)
+  m = &Module{
+    Id: "hashicorp/consul/aws/0.0.2",
+    Owner: "gruntwork-team",
+    Namespace: "hashicorp",
+    Name: "consul",
+    Version: "0.0.2",
+    Provider: "foobar",
+    Description: "A Terraform Module for how to run Consul on Foobar using Terraform and Packer",
+    Source: "https://github.com/hashicorp/terraform-aws-consul",
+    Published_at: t,
+    Downloads: 5,
     Verified: false,
   }
   modules = append(modules, *m)

@@ -106,8 +106,35 @@ func (api *moduleAPI) versionsHandler(w http.ResponseWriter, r *http.Request) {
     log.Error(err)
   } else {
     w.Header().Set("Content-Type", "application/json")
-		out, _ := json.Marshal(versions)
-    fmt.Fprintf(w, string(out))
+		mvs := make(map[string][]string)
+		for _, v := range versions {
+			fmt.Println(v)
+			mvs[v.Version] = append(mvs[v.Version], v.Provider)
+		}
+		fmt.Println(mvs)
+    resp := &VersionsResponse {
+		}
+		resp.Modules = append(resp.Modules, VersionsModulestype {
+						Source: versions[0].Source,
+					})
+		for v := range mvs {
+			n := &VersionsVersiontype {
+				Version: v,
+				Submodules: make([]string,0),
+				Root: VersionsRoottype{
+					Dependencies: make([]string,0),
+				},
+			}
+		  for _, p := range mvs[v] {
+				r := &VersionsProviderstype {
+					Name: p,
+					Version: "",
+				}
+				n.Root.Providers = append(n.Root.Providers, *r)
+			}
+			resp.Modules[0].Versions = append(resp.Modules[0].Versions, *n)
+		}
+		json.NewEncoder(w).Encode(resp)
   }
 }
 
