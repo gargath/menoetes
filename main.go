@@ -2,17 +2,17 @@ package main
 
 import (
 	"os"
-	"github.com/spf13/viper"
+
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 
-	"github.com/gargath/menoetes/server"
-
+	"github.com/gargath/menoetes/pkg/server"
 )
 
 func main() {
 	err := LoadConfig()
-  if err != nil {
-		log.WithFields(log.Fields{"error":err,}).Warn("Error reading config file")
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Warn("Error reading config file")
 		os.Exit(1)
 	}
 
