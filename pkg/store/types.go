@@ -2,8 +2,6 @@ package store
 
 import (
 	"time"
-
-	"gopkg.in/mgo.v2/bson"
 )
 
 type ModuleStore interface {
@@ -15,15 +13,15 @@ type ModuleStore interface {
 }
 
 type Module struct {
-	Id           bson.ObjectId `json:"id" bson:"_id,omitempty"`
-	Owner        string        `json:"owner"`
-	Namespace    string        `json:"namespace"`
-	Name         string        `json:"name"`
-	Version      string        `json:"version"`
-	Provider     string        `json:"provider"`
-	Description  string        `json:"description"`
-	Source       string        `json:"source"`
-	Published_at time.Time     `json:"published_at"`
-	Downloads    int           `json:"downloads"`
-	Verified     bool          `json:"verified"`
+	Id           string    `json:"id"`
+	Owner        string    `json:"owner"`
+	Namespace    string    `json:"namespace"`
+	Name         string    `json:"name"`
+	Version      string    `json:"version"`
+	Provider     string    `json:"provider"`
+	Description  string    `json:"description"`
+	Source       string    `json:"source"`
+	Published_at time.Time `json:"published_at"`
+	Downloads    int       `json:"downloads"`
+	Verified     bool      `json:"verified"`
 }

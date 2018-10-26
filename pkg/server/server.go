@@ -29,7 +29,7 @@ func (s *registryServer) Run() {
 	if s.debug {
 		r.HandleFunc("/.well-known/{disco_path}", m.Use(discoHandler, m.TokenAuth, m.DumpHeaders))
 	} else {
-		r.HandleFunc("/.well-known/", m.Use(discoHandler, m.TokenAuth))
+		r.HandleFunc("/.well-known/{disco_path}", m.Use(discoHandler, m.TokenAuth))
 	}
 	modules_api.RegisterModulesAPI(r)
 	log.Info("Listening...")

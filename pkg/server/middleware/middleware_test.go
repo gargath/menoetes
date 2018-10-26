@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/gorilla/mux"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -23,20 +25,21 @@ func TestMiddlware(t *testing.T) {
 }
 
 var _ = Describe("Middleware", func() {
+	var server *httptest.Server
+	var httpClient *http.Client
+	log.SetOutput(ioutil.Discard)
+	BeforeEach(func() {
+		r := mux.NewRouter()
+		r.HandleFunc("/foo", Use(testResponder, TokenAuth))
+		server = httptest.NewServer(r)
+		httpClient = &http.Client{}
+	})
+
+	AfterEach(func() {
+		server.Close()
+	})
+
 	Describe("TokenAuth", func() {
-		var server *httptest.Server
-		var httpClient *http.Client
-		BeforeEach(func() {
-			r := mux.NewRouter()
-			r.HandleFunc("/foo", Use(testResponder, TokenAuth))
-			server = httptest.NewServer(r)
-			httpClient = &http.Client{}
-		})
-
-		AfterEach(func() {
-			server.Close()
-		})
-
 		It("Allows valid tokens", func() {
 			req, _ := http.NewRequest("GET", server.URL+"/foo", nil)
 			req.Header.Set("Authorization", "Bearer reallylongstringthatstotallygoingtostandoutinthelistofheaders")

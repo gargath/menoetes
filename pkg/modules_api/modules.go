@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	mux "github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
 	store "github.com/gargath/menoetes/pkg/store"
+
+	tfm "github.com/hashicorp/terraform/registry/response"
 )
 
 type modulesAPI struct {
@@ -26,25 +29,38 @@ func (api *modulesAPI) listHandler(w http.ResponseWriter, r *http.Request) {
 		limit = 10
 	}
 	namespace, ok := vars["namespace"]
+	var resp tfm.ModuleList
 	if ok {
 		name, ok := vars["name"]
 		if ok {
-			fmt.Fprintf(w, "hello, you've hit %s and will receive providers for module %s in namespace %s", r.URL.Path, name, namespace)
+			// fmt.Fprintf(w, "hello, you've hit %s and will receive providers for module %s in namespace %s", r.URL.Path, name, namespace)
+			resp = tfm.ModuleList{
+				Meta: tfm.PaginationMeta{
+					Limit:         limit,
+					CurrentOffset: 0,
+					NextURL:       "",
+					PrevURL:       "",
+				},
+				Modules: []*tfm.Module{
+					{
+						Owner:       "foo",
+						Namespace:   namespace,
+						Name:        name,
+						Version:     "0.1.0",
+						Provider:    "goo",
+						Description: "The description",
+						Source:      "http://example.com",
+						PublishedAt: time.Now(),
+						Downloads:   0,
+						Verified:    false,
+					},
+				},
+			}
 		} else {
 			fmt.Fprintf(w, "hello, you've hit %s and will receive modules in namespace %s\n", r.URL.Path, namespace)
 		}
 	} else {
 		fmt.Fprintf(w, "hello, you've hit %s and will receive ALL modules\n", r.URL.Path)
-	}
-	meta := &Metatype{
-		Limit:          limit,
-		Current_offset: 0,
-		Next_url:       "bla",
-	}
-	list, _ := api.store.GetModulesList(vars["namespace"], vars["name"], vars["provider"])
-	resp := &ListResponse{
-		Meta:    *meta,
-		Modules: list,
 	}
 	json.NewEncoder(w).Encode(resp)
 }
@@ -99,6 +115,11 @@ func (api *modulesAPI) downloadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (api *modulesAPI) versionsHandler(w http.ResponseWriter, r *http.Request) {
+	return
+}
+
+/*
+func (api *modulesAPI) versionsHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	log.Info("Call to versions handler")
 	versions, err := api.store.GetModuleVersions(vars["namespace"], vars["name"], vars["provider"])
@@ -137,3 +158,4 @@ func (api *modulesAPI) versionsHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(resp)
 	}
 }
+*/
