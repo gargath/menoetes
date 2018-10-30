@@ -1,11 +1,18 @@
 package middleware
 
 import (
+	ctx "context"
+	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/gargath/menoetes/pkg/store"
 	log "github.com/sirupsen/logrus"
 )
+
+type TokenManager struct {
+	Store store.Store
+}
 
 func Use(h http.HandlerFunc, middleware ...func(http.HandlerFunc) http.HandlerFunc) http.HandlerFunc {
 	for _, m := range middleware {
@@ -14,14 +21,30 @@ func Use(h http.HandlerFunc, middleware ...func(http.HandlerFunc) http.HandlerFu
 	return h
 }
 
-func TokenAuth(h http.HandlerFunc) http.HandlerFunc {
+func (tm *TokenManager) TokenAuth(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Header.Get("Authorization") != "Bearer reallylongstringthatstotallygoingtostandoutinthelistofheaders" {
+		auth := r.Header.Get("Authorization")
+		if auth == "" {
+			http.Error(w, "anonymous access not allowed", http.StatusUnauthorized)
+			return
+		}
+		tns := strings.Split(auth, " ")
+		fmt.Printf(">>%s<<\n", tns[0])
+		if strings.TrimSpace(tns[0]) != "Bearer" {
+			fmt.Printf("Bearer isn't")
+			http.Error(w, "malformed Authorization header", http.StatusBadRequest)
+			return
+		}
+		user, err := tm.Store.ValidateAccessToken(strings.TrimSpace(tns[1]))
+		if err != nil {
 			log.Printf("Unauthorized Access: %+v", *r)
 			http.Error(w, "access denied", http.StatusForbidden)
 			return
+		} else {
+			ctx := ctx.WithValue(r.Context(), "username", user)
+			r2 := r.WithContext(ctx)
+			h.ServeHTTP(w, r2)
 		}
-		h.ServeHTTP(w, r)
 	}
 }
 

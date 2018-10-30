@@ -5,6 +5,7 @@ import (
 
 	modules_api "github.com/gargath/menoetes/pkg/modules_api"
 	m "github.com/gargath/menoetes/pkg/server/middleware"
+	s "github.com/gargath/menoetes/pkg/store"
 
 	mux "github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -14,13 +15,15 @@ type registryServer struct {
 	debug           bool
 	tlsCertFilePath string
 	tlsKeyFilePath  string
+	store           s.Store
 }
 
-func New(cert string, key string, d bool) *registryServer {
+func New(cert string, key string, d bool, st s.Store) *registryServer {
 	return &registryServer{
 		debug:           d,
 		tlsCertFilePath: cert,
 		tlsKeyFilePath:  key,
+		store:           st,
 	}
 }
 

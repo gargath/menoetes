@@ -4,12 +4,13 @@ import (
 	"time"
 )
 
-type ModuleStore interface {
+type Store interface {
 	GetModuleDetails(string, string, string, string) (Module, error)
 	GetLatestVersion(string, string, string) (string, error)
 	GetDownloadURL(string, string, string, string) (string, error)
 	GetModuleVersions(string, string, string) ([]Module, error)
 	GetModulesList(string, string, string) ([]Module, error)
+	ValidateAccessToken(string) (string, error)
 }
 
 type Module struct {

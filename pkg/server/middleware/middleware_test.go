@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gargath/menoetes/pkg/store"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
@@ -30,7 +31,11 @@ var _ = Describe("Middleware", func() {
 	log.SetOutput(ioutil.Discard)
 	BeforeEach(func() {
 		r := mux.NewRouter()
-		r.HandleFunc("/foo", Use(testResponder, TokenAuth))
+		s := store.NewMockStore()
+		tm := &TokenManager{
+			Store: s,
+		}
+		r.HandleFunc("/foo", Use(testResponder, tm.TokenAuth))
 		server = httptest.NewServer(r)
 		httpClient = &http.Client{}
 	})
@@ -51,8 +56,19 @@ var _ = Describe("Middleware", func() {
 			Expect(err2).NotTo(HaveOccurred())
 		})
 
-		It("Rejects invalid tokens", func() {
+		It("Rejects anonymous requests", func() {
 			resp, err := httpClient.Get(server.URL + "/foo")
+			bodyBytes, err2 := ioutil.ReadAll(resp.Body)
+			Expect(resp.StatusCode).To(Equal(http.StatusUnauthorized))
+			Expect(string(bodyBytes)).To(Equal("anonymous access not allowed\n"))
+			Expect(err).NotTo(HaveOccurred())
+			Expect(err2).NotTo(HaveOccurred())
+		})
+
+		It("Rejects invalid tokens", func() {
+			req, _ := http.NewRequest("GET", server.URL+"/foo", nil)
+			req.Header.Set("Authorization", "Bearer illegal")
+			resp, err := httpClient.Do(req)
 			bodyBytes, err2 := ioutil.ReadAll(resp.Body)
 			Expect(resp.StatusCode).To(Equal(http.StatusForbidden))
 			Expect(string(bodyBytes)).To(Equal("access denied\n"))

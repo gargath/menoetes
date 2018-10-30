@@ -86,6 +86,14 @@ func (b *MockStore) GetModuleDetails(namespace string, name string, provider str
 	return *module, nil
 }
 
+func (b *MockStore) ValidateAccessToken(token string) (string, error) {
+	if token == "reallylongstringthatstotallygoingtostandoutinthelistofheaders" {
+		return "mockuser", nil
+	} else {
+		return "", fmt.Errorf("Invalid token %s", token)
+	}
+}
+
 func NewMockStore() *MockStore {
 	return &MockStore{}
 }

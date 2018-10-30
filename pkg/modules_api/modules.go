@@ -16,7 +16,7 @@ import (
 )
 
 type modulesAPI struct {
-	store store.ModuleStore
+	store store.Store
 }
 
 func (api *modulesAPI) listHandler(w http.ResponseWriter, r *http.Request) {

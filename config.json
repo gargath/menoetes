@@ -3,5 +3,16 @@
   "tls": {
     "certfile": "cert.pem",
     "keyfile": "key.pem"
+  },
+  "database": {
+    "host": "localhost",
+    "username": "menoetes",
+    "password": "password"
+  },
+  "database": {
+    "host": "localhost",
+    "username": "menoetes",
+    "password": "password",
+    "dbname": "menoetes"
   }
 }
