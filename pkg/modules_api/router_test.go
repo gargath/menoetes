@@ -6,6 +6,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	m "github.com/gargath/menoetes/pkg/server/middleware"
+	"github.com/gargath/menoetes/pkg/store"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
@@ -31,7 +34,8 @@ var _ = Describe("Modules Router", func() {
 	log.SetOutput(ioutil.Discard)
 	BeforeEach(func() {
 		r := mux.NewRouter()
-		RegisterModulesAPI(r)
+		st := store.NewMockStore()
+		RegisterModulesAPI(r, &m.TokenManager{Store: st}, st)
 		server = httptest.NewServer(r)
 		httpClient = &http.Client{}
 	})

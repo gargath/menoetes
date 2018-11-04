@@ -29,12 +29,13 @@ func New(cert string, key string, d bool, st s.Store) *registryServer {
 
 func (s *registryServer) Run() {
 	r := mux.NewRouter()
+	tm := &m.TokenManager{Store: s.store}
 	if s.debug {
-		r.HandleFunc("/.well-known/{disco_path}", m.Use(discoHandler, m.TokenAuth, m.DumpHeaders))
+		r.HandleFunc("/.well-known/{disco_path}", m.Use(discoHandler, tm.TokenAuth, m.DumpHeaders))
 	} else {
-		r.HandleFunc("/.well-known/{disco_path}", m.Use(discoHandler, m.TokenAuth))
+		r.HandleFunc("/.well-known/{disco_path}", m.Use(discoHandler, tm.TokenAuth))
 	}
-	modules_api.RegisterModulesAPI(r)
+	modules_api.RegisterModulesAPI(r, tm, s.store)
 	log.Info("Listening...")
 	err := http.ListenAndServeTLS(":443", s.tlsCertFilePath, s.tlsKeyFilePath, r)
 	log.Fatal(err)

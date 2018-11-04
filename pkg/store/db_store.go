@@ -42,7 +42,18 @@ func NewDbStore() (Store, error) {
 		viper.GetString("database.username"), viper.GetString("database.password"), viper.GetString("database.dbname"))
 	db, err := sql.Open("postgres", dbinfo)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to connect to database: %s", err)
+	}
+	store := &DbStore{db: db}
+	outdated, err := needsMigration(store)
+	if err != nil {
+		return nil, fmt.Errorf("failed to verify if schema migration is required: %s", err)
+	}
+	if outdated {
+		err := migrateToLatest(store)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return &DbStore{db: db}, nil
 }
